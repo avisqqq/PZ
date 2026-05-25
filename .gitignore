@@ -1,0 +1,23 @@
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+venv/
+.venv/
+backend/venv/
+
+# Local configuration
+.env
+backend/.env
+
+# Angular / Node
+node_modules/
+dist/
+.angular/
+
