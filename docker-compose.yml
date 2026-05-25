@@ -1,0 +1,16 @@
+services:
+  database:
+    image: postgres:16
+    container_name: currency_database
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: currency_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - currency_database_data:/var/lib/postgresql/data
+
+volumes:
+  currency_database_data:
