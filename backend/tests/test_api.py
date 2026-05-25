@@ -24,14 +24,14 @@ def add_rate(
     return exchange_rate
 
 
-def test_health_check_returns_database_status(client):
+def test_endpoint_zdrowia_zwraca_status_bazy_danych(client):
     response = client.get("/health")
 
     assert response.status_code == 200
     assert response.json() == {"status": "ok", "database": "connected"}
 
 
-def test_get_currencies_filters_by_date_and_currency(client, db_session):
+def test_pobieranie_kursow_filtruje_po_dacie_i_walucie(client, db_session):
     add_rate(db_session, "USD", date(2026, 5, 25), Decimal("3.6374"))
     add_rate(db_session, "EUR", date(2026, 5, 25), Decimal("4.2500"))
     add_rate(db_session, "USD", date(2026, 5, 24), Decimal("3.6000"))
@@ -53,7 +53,7 @@ def test_get_currencies_filters_by_date_and_currency(client, db_session):
     assert body[0]["rate"] == "3.6374"
 
 
-def test_get_currencies_range_filters_records(client, db_session):
+def test_pobieranie_zakresu_kursow_filtruje_rekordy(client, db_session):
     add_rate(db_session, "USD", date(2026, 5, 1), Decimal("3.6000"))
     add_rate(db_session, "USD", date(2026, 5, 25), Decimal("3.6374"))
     add_rate(db_session, "USD", date(2026, 4, 30), Decimal("3.5000"))
@@ -74,7 +74,7 @@ def test_get_currencies_range_filters_records(client, db_session):
     assert {item["effective_date"] for item in body} == {"2026-05-01", "2026-05-25"}
 
 
-def test_fetch_currencies_uses_nbp_service_mock(client, monkeypatch):
+def test_pobieranie_kursow_uzywa_zamockowanego_serwisu_nbp(client, monkeypatch):
     def fake_fetch_table_from_nbp(selected_date=None, start_date=None, end_date=None):
         assert selected_date == date(2026, 5, 25)
         return [
@@ -112,7 +112,7 @@ def test_fetch_currencies_uses_nbp_service_mock(client, monkeypatch):
     }
 
 
-def test_fetch_currencies_range_uses_nbp_service_mock(client, monkeypatch):
+def test_pobieranie_zakresu_kursow_uzywa_zamockowanego_serwisu_nbp(client, monkeypatch):
     def fake_fetch_table_from_nbp(selected_date=None, start_date=None, end_date=None):
         assert selected_date is None
         assert start_date == date(2026, 5, 1)
@@ -170,7 +170,7 @@ def test_fetch_currencies_range_uses_nbp_service_mock(client, monkeypatch):
     }
 
 
-def test_get_currencies_by_date_path_returns_rates(client, db_session):
+def test_sciezka_z_data_zwraca_kursy_walut(client, db_session):
     add_rate(db_session, "USD", date(2026, 5, 25), Decimal("3.6374"))
     add_rate(db_session, "EUR", date(2026, 5, 25), Decimal("4.2500"))
 
@@ -186,7 +186,7 @@ def test_get_currencies_by_date_path_returns_rates(client, db_session):
     assert body[0]["effective_date"] == "2026-05-25"
 
 
-def test_range_returns_bad_request_for_invalid_dates(client):
+def test_zakres_zwraca_blad_dla_nieprawidlowej_kolejnosci_dat(client):
     response = client.get(
         "/currencies/range",
         params={

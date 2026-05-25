@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { CurrencyApi } from './currency-api';
 
-describe('CurrencyApi', () => {
+describe('Serwis API kursow walut', () => {
   let service: CurrencyApi;
   let httpMock: HttpTestingController;
 
@@ -21,7 +21,7 @@ describe('CurrencyApi', () => {
     httpMock.verify();
   });
 
-  it('should request rates from range endpoint with filters', () => {
+  it('powinien pobrac kursy z endpointu zakresu z filtrami', () => {
     service.getRates('2026-05-01', '2026-05-25', 'USD').subscribe((rates) => {
       expect(rates).toEqual([]);
     });
@@ -35,7 +35,7 @@ describe('CurrencyApi', () => {
     request.flush([]);
   });
 
-  it('should call fetch range endpoint', () => {
+  it('powinien wywolac endpoint pobierania zakresu', () => {
     service.fetchRates('2026-05-01', '2026-05-25').subscribe((result) => {
       expect(result.saved_records).toBe(3);
     });

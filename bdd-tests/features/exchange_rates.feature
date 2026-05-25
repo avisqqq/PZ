@@ -1,20 +1,19 @@
-Feature: Exchange rates API
-  The application should provide exchange rates from the local database and NBP API.
+Feature: API kursow walut
+  Aplikacja powinna udostepniac kursy walut z lokalnej bazy danych i API NBP.
 
-  Scenario: Backend health endpoint confirms database connection
-    Given the backend API is available
-    When I check the backend health
-    Then the backend should report database status "connected"
+  Scenario: Endpoint zdrowia backendu potwierdza polaczenie z baza danych
+    Given API backendu jest dostepne
+    When sprawdzam stan backendu
+    Then backend powinien zglosic status bazy danych "connected"
 
-  Scenario: User fetches and reads USD exchange rate for a selected day
-    Given the backend API is available
-    When I fetch exchange rates for date "2026-05-25"
-    And I request exchange rates for date "2026-05-25" and currency "USD"
-    Then the response should contain currency "USD"
-    And every returned rate should have date "2026-05-25"
+  Scenario: Uzytkownik pobiera i odczytuje kurs USD dla wybranego dnia
+    Given API backendu jest dostepne
+    When pobieram kursy walut dla daty "2026-05-25"
+    And prosze o kursy walut dla daty "2026-05-25" i waluty "USD"
+    Then odpowiedz powinna zawierac walute "USD"
+    And kazdy zwrocony kurs powinien miec date "2026-05-25"
 
-  Scenario: User cannot request range with invalid date order
-    Given the backend API is available
-    When I request exchange rates from "2026-05-25" to "2026-05-01"
-    Then the response status should be 400
-
+  Scenario: Uzytkownik nie moze pobrac zakresu z nieprawidlowa kolejnoscia dat
+    Given API backendu jest dostepne
+    When prosze o kursy walut od "2026-05-25" do "2026-05-01"
+    Then status odpowiedzi powinien byc 400

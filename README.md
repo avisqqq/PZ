@@ -48,18 +48,18 @@ Backend unit tests:
 
 ```bash
 cd backend
-python -m pytest
+./venv/bin/python -m pytest
 ```
 
 Zakres testow backendu:
 
-- `test_health_check_returns_database_status` - sprawdza endpoint `/health` i polaczenie z baza.
-- `test_get_currencies_filters_by_date_and_currency` - sprawdza filtrowanie kursow po dacie i walucie.
-- `test_get_currencies_range_filters_records` - sprawdza pobieranie danych z zakresu dat.
-- `test_fetch_currencies_uses_nbp_service_mock` - sprawdza pobieranie danych z NBP dla jednej daty z mockiem.
-- `test_fetch_currencies_range_uses_nbp_service_mock` - sprawdza pobieranie danych z NBP dla zakresu dat z mockiem.
-- `test_get_currencies_by_date_path_returns_rates` - sprawdza endpoint z data w sciezce URL.
-- `test_range_returns_bad_request_for_invalid_dates` - sprawdza blad dla niepoprawnego zakresu dat.
+- `test_endpoint_zdrowia_zwraca_status_bazy_danych` - sprawdza endpoint `/health` i polaczenie z baza.
+- `test_pobieranie_kursow_filtruje_po_dacie_i_walucie` - sprawdza filtrowanie kursow po dacie i walucie.
+- `test_pobieranie_zakresu_kursow_filtruje_rekordy` - sprawdza pobieranie danych z zakresu dat.
+- `test_pobieranie_kursow_uzywa_zamockowanego_serwisu_nbp` - sprawdza pobieranie danych z NBP dla jednej daty z mockiem.
+- `test_pobieranie_zakresu_kursow_uzywa_zamockowanego_serwisu_nbp` - sprawdza pobieranie danych z NBP dla zakresu dat z mockiem.
+- `test_sciezka_z_data_zwraca_kursy_walut` - sprawdza endpoint z data w sciezce URL.
+- `test_zakres_zwraca_blad_dla_nieprawidlowej_kolejnosci_dat` - sprawdza blad dla niepoprawnego zakresu dat.
 
 Frontend unit tests Jasmine/Karma:
 
@@ -70,14 +70,14 @@ npm test -- --watch=false
 
 Zakres testow frontendu:
 
-- `should create the app` - sprawdza, czy glowny komponent Angular tworzy sie poprawnie.
-- `should render page title` - sprawdza wyswietlenie tytulu aplikacji.
-- `should load rates after clicking display button` - sprawdza logike przycisku wyswietlania danych.
-- `should not call backend for range longer than 93 days` - sprawdza walidacje limitu API NBP.
-- `should not call backend for PLN because it is the base currency` - sprawdza blokade waluty PLN.
-- `should clear table when backend returns an error` - sprawdza czyszczenie tabeli po bledzie backendu.
-- `should request rates from range endpoint with filters` - sprawdza zapytanie GET do backendu z filtrami.
-- `should call fetch range endpoint` - sprawdza zapytanie POST pobierajace dane z NBP.
+- `powinna utworzyc aplikacje` - sprawdza, czy glowny komponent Angular tworzy sie poprawnie.
+- `powinna wyswietlic tytul strony` - sprawdza wyswietlenie tytulu aplikacji.
+- `powinna zaladowac kursy po kliknieciu przycisku wyswietlania` - sprawdza logike przycisku wyswietlania danych.
+- `nie powinna wywolywac backendu dla zakresu dluzszego niz 93 dni` - sprawdza walidacje limitu API NBP.
+- `nie powinna wywolywac backendu dla PLN, bo jest waluta bazowa` - sprawdza blokade waluty PLN.
+- `powinna wyczyscic tabele, gdy backend zwroci blad` - sprawdza czyszczenie tabeli po bledzie backendu.
+- `powinien pobrac kursy z endpointu zakresu z filtrami` - sprawdza zapytanie GET do backendu z filtrami.
+- `powinien wywolac endpoint pobierania zakresu` - sprawdza zapytanie POST pobierajace dane z NBP.
 
 BDD tests Gherkin/Cucumber:
 
@@ -88,11 +88,11 @@ mvn test
 
 Scenariusze BDD:
 
-- `Backend health endpoint confirms database connection` - potwierdza, ze backend dziala i ma polaczenie z baza.
-- `User fetches and reads USD exchange rate for a selected day` - sprawdza zachowanie pobrania i odczytu kursu USD dla daty.
-- `User cannot request range with invalid date order` - sprawdza walidacje blednego zakresu dat w API.
-- `User cannot display PLN because it is the base currency` - sprawdza komunikat frontendu dla waluty PLN.
-- `User cannot request range longer than NBP API limit` - sprawdza komunikat frontendu dla zakresu ponad 93 dni.
+- `Endpoint zdrowia backendu potwierdza polaczenie z baza danych` - potwierdza, ze backend dziala i ma polaczenie z baza.
+- `Uzytkownik pobiera i odczytuje kurs USD dla wybranego dnia` - sprawdza zachowanie pobrania i odczytu kursu USD dla daty.
+- `Uzytkownik nie moze pobrac zakresu z nieprawidlowa kolejnoscia dat` - sprawdza walidacje blednego zakresu dat w API.
+- `Uzytkownik nie moze wyswietlic PLN, bo jest waluta bazowa` - sprawdza komunikat frontendu dla waluty PLN.
+- `Uzytkownik nie moze pobrac zakresu dluzszego niz limit API NBP` - sprawdza komunikat frontendu dla zakresu ponad 93 dni.
 
 Testy BDD wymagaja dzialajacej aplikacji, dlatego przed nimi nalezy uruchomic:
 

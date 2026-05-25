@@ -8,7 +8,7 @@ import { App } from './app';
 import { CurrencyApi } from './currency-api';
 import { ExchangeRate } from './exchange-rate';
 
-describe('App', () => {
+describe('Aplikacja kursow walut', () => {
   let currencyApiSpy: jasmine.SpyObj<CurrencyApi>;
 
   beforeEach(async () => {
@@ -29,20 +29,20 @@ describe('App', () => {
     }).compileComponents();
   });
 
-  it('should create the app', () => {
+  it('powinna utworzyc aplikacje', () => {
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 
-  it('should render page title', async () => {
+  it('powinna wyswietlic tytul strony', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Kursy walut');
   });
 
-  it('should load rates after clicking display button', () => {
+  it('powinna zaladowac kursy po kliknieciu przycisku wyswietlania', () => {
     const rates: ExchangeRate[] = [
       {
         id: 1,
@@ -68,7 +68,7 @@ describe('App', () => {
     expect(app.rates()).toEqual(rates);
   });
 
-  it('should not call backend for range longer than 93 days', () => {
+  it('nie powinna wywolywac backendu dla zakresu dluzszego niz 93 dni', () => {
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
 
@@ -79,7 +79,7 @@ describe('App', () => {
     expect(currencyApiSpy.getRates).not.toHaveBeenCalled();
   });
 
-  it('should not call backend for PLN because it is the base currency', () => {
+  it('nie powinna wywolywac backendu dla PLN, bo jest waluta bazowa', () => {
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
 
@@ -91,8 +91,8 @@ describe('App', () => {
     expect(currencyApiSpy.getRates).not.toHaveBeenCalled();
   });
 
-  it('should clear table when backend returns an error', () => {
-    currencyApiSpy.getRates.and.returnValue(throwError(() => new Error('backend error')));
+  it('powinna wyczyscic tabele, gdy backend zwroci blad', () => {
+    currencyApiSpy.getRates.and.returnValue(throwError(() => new Error('blad backendu')));
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
     app.rates.set([

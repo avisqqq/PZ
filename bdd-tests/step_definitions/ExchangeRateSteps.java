@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 
 public class ExchangeRateSteps {
-    @Given("the backend API is available")
+    @Given("API backendu jest dostepne")
     public void backendApiIsAvailable() {
         given()
             .when()
@@ -24,7 +24,7 @@ public class ExchangeRateSteps {
             .statusCode(200);
     }
 
-    @When("I check the backend health")
+    @When("sprawdzam stan backendu")
     public void checkBackendHealth() {
         TestContext.setResponse(
             given()
@@ -33,7 +33,7 @@ public class ExchangeRateSteps {
         );
     }
 
-    @When("I fetch exchange rates for date {string}")
+    @When("pobieram kursy walut dla daty {string}")
     public void fetchExchangeRatesForDate(String date) {
         TestContext.setResponse(
             given()
@@ -43,7 +43,7 @@ public class ExchangeRateSteps {
         );
     }
 
-    @When("I request exchange rates for date {string} and currency {string}")
+    @When("prosze o kursy walut dla daty {string} i waluty {string}")
     public void requestExchangeRatesForDateAndCurrency(String date, String currency) {
         TestContext.setResponse(
             given()
@@ -54,7 +54,7 @@ public class ExchangeRateSteps {
         );
     }
 
-    @When("I request exchange rates from {string} to {string}")
+    @When("prosze o kursy walut od {string} do {string}")
     public void requestExchangeRatesFromTo(String startDate, String endDate) {
         TestContext.setResponse(
             given()
@@ -65,7 +65,7 @@ public class ExchangeRateSteps {
         );
     }
 
-    @Then("the backend should report database status {string}")
+    @Then("backend powinien zglosic status bazy danych {string}")
     public void backendShouldReportDatabaseStatus(String databaseStatus) {
         TestContext.getResponse()
             .then()
@@ -73,7 +73,7 @@ public class ExchangeRateSteps {
             .body("database", equalTo(databaseStatus));
     }
 
-    @Then("the response should contain currency {string}")
+    @Then("odpowiedz powinna zawierac walute {string}")
     public void responseShouldContainCurrency(String currency) {
         List<String> currencies = TestContext.getResponse().jsonPath().getList("currency_code");
 
@@ -82,7 +82,7 @@ public class ExchangeRateSteps {
         assertThat(currencies, hasItem(currency));
     }
 
-    @Then("every returned rate should have date {string}")
+    @Then("kazdy zwrocony kurs powinien miec date {string}")
     public void everyReturnedRateShouldHaveDate(String date) {
         List<String> dates = TestContext.getResponse().jsonPath().getList("effective_date");
 
@@ -90,7 +90,7 @@ public class ExchangeRateSteps {
         assertThat(dates, everyItem(equalTo(date)));
     }
 
-    @Then("the response status should be {int}")
+    @Then("status odpowiedzi powinien byc {int}")
     public void responseStatusShouldBe(int statusCode) {
         TestContext.getResponse().then().statusCode(statusCode);
     }
