@@ -11,6 +11,20 @@ services:
       - "5432:5432"
     volumes:
       - currency_database_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build:
+      context: ./backend
+    container_name: currency_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://admin:admin@database:5432/currency_db
+      NBP_API_URL: https://api.nbp.pl/api/exchangerates/tables/a
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
 
 volumes:
   currency_database_data:
