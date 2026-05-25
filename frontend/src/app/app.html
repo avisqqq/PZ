@@ -1,0 +1,195 @@
+<main class="app-shell">
+  <section class="page-header">
+    <div>
+      <p class="eyebrow">NBP API</p>
+      <h1>Kursy walut</h1>
+      <p class="subtitle">
+        Pobieranie i prezentacja kursow srednich z podzialem na lata, kwartaly,
+        miesiace i dni.
+      </p>
+    </div>
+  </section>
+
+  <section class="toolbar" aria-label="Filtry kursow walut">
+    <mat-form-field appearance="outline">
+      <mat-label>Data od</mat-label>
+      <input
+        matInput
+        type="date"
+        [ngModel]="startDate()"
+        (ngModelChange)="setStartDate($event)"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Data do</mat-label>
+      <input
+        matInput
+        type="date"
+        [ngModel]="endDate()"
+        (ngModelChange)="setEndDate($event)"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Waluta</mat-label>
+      <input
+        matInput
+        maxlength="3"
+        placeholder="USD"
+        [ngModel]="currencyCode()"
+        (ngModelChange)="setCurrencyCode($event)"
+      />
+    </mat-form-field>
+
+    <div class="actions">
+      <button mat-flat-button color="primary" type="button" (click)="loadRates()">
+        <mat-icon>search</mat-icon>
+        Wyswietl
+      </button>
+      <button mat-stroked-button type="button" (click)="fetchRates()">
+        <mat-icon>download</mat-icon>
+        Pobierz z NBP
+      </button>
+    </div>
+  </section>
+
+  <section class="summary-grid" aria-label="Podsumowanie zakresu">
+    <mat-card appearance="outlined">
+      <span class="summary-label">Rekordy</span>
+      <strong>{{ totalRates() }}</strong>
+    </mat-card>
+    <mat-card appearance="outlined">
+      <span class="summary-label">Lata</span>
+      <strong>{{ groupedSummary().years }}</strong>
+    </mat-card>
+    <mat-card appearance="outlined">
+      <span class="summary-label">Kwartaly</span>
+      <strong>{{ groupedSummary().quarters }}</strong>
+    </mat-card>
+    <mat-card appearance="outlined">
+      <span class="summary-label">Miesiace</span>
+      <strong>{{ groupedSummary().months }}</strong>
+    </mat-card>
+    <mat-card appearance="outlined">
+      <span class="summary-label">Dni</span>
+      <strong>{{ groupedSummary().days }}</strong>
+    </mat-card>
+  </section>
+
+  <section class="content-grid">
+    <div class="table-section">
+      @if (isLoading()) {
+        <div class="loading-state">
+          <mat-spinner diameter="36"></mat-spinner>
+          <span>Ladowanie danych</span>
+        </div>
+      } @else if (rates().length === 0) {
+        <div class="empty-state">
+          <mat-icon>table_view</mat-icon>
+          <p>Brak danych dla wybranego zakresu.</p>
+        </div>
+      } @else {
+        <div class="table-wrapper">
+          <table
+            mat-table
+            matSort
+            matSortDisableClear
+            matSortActive="effective_date"
+            matSortDirection="desc"
+            [dataSource]="sortedRates()"
+            (matSortChange)="setSort($event)"
+            class="rates-table"
+          >
+            <ng-container matColumnDef="effective_date">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
+              <td mat-cell *matCellDef="let rate">{{ rate.effective_date }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="currency_code">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Kod</th>
+              <td mat-cell *matCellDef="let rate">
+                <span class="currency-code">{{ rate.currency_code }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="currency_name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Waluta</th>
+              <td mat-cell *matCellDef="let rate">{{ rate.currency_name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="rate">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Kurs</th>
+              <td mat-cell *matCellDef="let rate">{{ rate.rate }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="table_number">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Tabela NBP</th>
+              <td mat-cell *matCellDef="let rate">{{ rate.table_number }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </div>
+      }
+    </div>
+
+    <aside class="chart-panel" aria-label="Wykres kursow">
+      <div class="chart-header">
+        <div>
+          <h2>Wykres kursow</h2>
+          <p>Ostatnie dane z tabeli wedlug daty.</p>
+        </div>
+      </div>
+
+      @if (!activeChartCurrencyCode()) {
+        <div class="chart-empty">
+          <mat-icon>show_chart</mat-icon>
+          <span>Wpisz kod waluty, aby pokazac wykres.</span>
+        </div>
+      } @else if (rates().length === 0) {
+        <div class="chart-empty">
+          <mat-icon>show_chart</mat-icon>
+          <span>Brak danych</span>
+        </div>
+      } @else if (chartSeries().length === 0 || chartSeries()[0].rates.length < 2) {
+        <div class="chart-empty">
+          <mat-icon>show_chart</mat-icon>
+          <span>Wykres wymaga co najmniej 2 rekordow.</span>
+        </div>
+      } @else {
+        <div class="chart-plot">
+          <div class="chart-scale">
+            <span>{{ chartMaxLabel() }}</span>
+            <span>{{ chartMinLabel() }}</span>
+          </div>
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="line-chart">
+            <line x1="0" y1="0" x2="100" y2="0" class="grid-line" />
+            <line x1="0" y1="50" x2="100" y2="50" class="grid-line" />
+            <line x1="0" y1="100" x2="100" y2="100" class="grid-line" />
+
+            @for (series of chartSeries(); track series.code; let index = $index) {
+              <polyline
+                [attr.points]="getChartPoints(series.rates)"
+                [attr.class]="'chart-line chart-line-' + index"
+              />
+            }
+          </svg>
+        </div>
+        <div class="chart-axis">
+          <span>{{ chartSeries()[0].rates[0].effective_date }}</span>
+          <span>{{ chartSeries()[0].rates[chartSeries()[0].rates.length - 1].effective_date }}</span>
+        </div>
+        <div class="chart-legend">
+          @for (series of chartSeries(); track series.code; let index = $index) {
+            <span>
+              <i [attr.class]="'legend-dot legend-dot-' + index"></i>
+              {{ series.code }}
+            </span>
+          }
+        </div>
+      }
+    </aside>
+  </section>
+</main>

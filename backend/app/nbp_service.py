@@ -99,14 +99,5 @@ def ensure_rates_for_date(db: Session, selected_date: date) -> None:
 
 
 def ensure_rates_for_range(db: Session, start_date: date, end_date: date) -> None:
-    existing_rate = db.scalar(
-        select(ExchangeRate.id)
-        .where(ExchangeRate.effective_date >= start_date)
-        .where(ExchangeRate.effective_date <= end_date)
-        .limit(1)
-    )
-    if existing_rate:
-        return
-
     tables = fetch_table_from_nbp(start_date=start_date, end_date=end_date)
     save_nbp_tables(db, tables)

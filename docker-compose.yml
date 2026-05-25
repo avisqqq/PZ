@@ -26,5 +26,15 @@ services:
     depends_on:
       - database
 
+  frontend:
+    build:
+      context: ./frontend
+    container_name: currency_frontend
+    restart: unless-stopped
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
 volumes:
   currency_database_data:
